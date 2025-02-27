@@ -1,0 +1,120 @@
+[gd_scene load_steps=8 format=3 uid="uid://bh2evmjmi1xkk"]
+
+[ext_resource type="Script" path="res://prehrada.gd" id="1_85v03"]
+[ext_resource type="Script" path="res://input_river.gd" id="2_f17s5"]
+[ext_resource type="Script" path="res://output_river.gd" id="3_dqhf4"]
+[ext_resource type="Texture2D" uid="uid://ynbv8dv32bw0" path="res://prehrada.png" id="3_o75wf"]
+[ext_resource type="Script" path="res://status_display.gd" id="4_k354e"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_q600q"]
+
+[sub_resource type="Gradient" id="Gradient_qir1v"]
+offsets = PackedFloat32Array(0, 0.573333, 1)
+colors = PackedColorArray(0.99355, 0.995736, 1, 1, 0.00471527, 0.179295, 0.796862, 1, 1, 1, 1, 1)
+
+[node name="Main" type="Node2D"]
+
+[node name="Prehrada" type="Node2D" parent="."]
+position = Vector2(27, 62)
+script = ExtResource("1_85v03")
+max_capacity = null
+current_water_level = 1.0
+spillway_percentage = null
+spillway_flow_rate = 600.0
+input_river = NodePath("../Connection/InputRiver")
+output_river = NodePath("../Connection/OutputRiver")
+
+[node name="ColorRect" type="ColorRect" parent="Prehrada"]
+material = SubResource("CanvasItemMaterial_q600q")
+offset_left = 1.0
+offset_top = 19.0
+offset_right = 244.0
+offset_bottom = 181.0
+color = Color(0.0705882, 0.172549, 1, 1)
+
+[node name="Prehrada" type="Panel" parent="Prehrada"]
+offset_top = 13.0
+offset_right = 456.0
+offset_bottom = 284.0
+
+[node name="StatusDisplay" type="Control" parent="Prehrada/Prehrada"]
+layout_mode = 1
+anchor_left = 0.121
+anchor_top = 0.819
+anchor_right = 0.121
+anchor_bottom = 0.819
+offset_left = -19.944
+offset_top = -38.497
+offset_right = 20.056
+offset_bottom = 38.503
+script = ExtResource("4_k354e")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Prehrada/Prehrada/StatusDisplay"]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.45
+anchor_bottom = -0.45
+offset_left = -36.0
+offset_top = -54.35
+offset_right = 326.0
+offset_bottom = 136.65
+theme_override_constants/separation = 10
+
+[node name="MarginContainer" type="MarginContainer" parent="Prehrada/Prehrada/StatusDisplay/VBoxContainer"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Prehrada/Prehrada/StatusDisplay/VBoxContainer/MarginContainer"]
+custom_minimum_size = Vector2(300, 150)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+
+[node name="SpinStavidlo" type="SpinBox" parent="Prehrada/Prehrada/StatusDisplay/VBoxContainer"]
+layout_mode = 2
+max_value = 10.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Prehrada"]
+position = Vector2(348, 145)
+scale = Vector2(0.217016, 0.356488)
+texture = ExtResource("3_o75wf")
+
+[node name="SpillwayParticles" type="CPUParticles2D" parent="Prehrada"]
+position = Vector2(408, 210)
+amount = 20
+emission_shape = 1
+emission_sphere_radius = 28.15
+initial_velocity_min = 40.4
+initial_velocity_max = 212.12
+scale_amount_min = 0.0
+scale_amount_max = 31.3
+color = Color(0.0468791, 0.251153, 0.540257, 1)
+color_ramp = SubResource("Gradient_qir1v")
+
+[node name="OverflowParticles" type="CPUParticles2D" parent="Prehrada"]
+position = Vector2(374, 80)
+amount = 20
+lifetime = 0.5
+emission_shape = 1
+emission_sphere_radius = 28.15
+initial_velocity_min = 40.4
+initial_velocity_max = 212.12
+scale_amount_min = 0.0
+scale_amount_max = 31.3
+color = Color(0.0468791, 0.251153, 0.540257, 1)
+color_ramp = SubResource("Gradient_qir1v")
+
+[node name="Connection" type="Node2D" parent="."]
+position = Vector2(33, 85)
+
+[node name="OutputRiver" type="Node2D" parent="Connection"]
+position = Vector2(3, 69)
+script = ExtResource("3_dqhf4")
+
+[node name="InputRiver" type="Node2D" parent="Connection"]
+position = Vector2(4, 38)
+script = ExtResource("2_f17s5")
+flow_rate = 200.0
+output_target = NodePath("../../Prehrada")
+
+[connection signal="value_changed" from="Prehrada/Prehrada/StatusDisplay/VBoxContainer/SpinStavidlo" to="Prehrada" method="_on_spin_stavidlo_value_changed"]
